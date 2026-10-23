@@ -58,7 +58,7 @@ def test_total_payment_and_interest_at_zero_rate():
 def test_amortisation_schedule_contains_monthly_payment_breakdown():
     rows = amortisation_schedule(1000, 12, 3)
 
-    assert len(rows) == 2
+    assert len(rows) == 3
     assert rows[0] == {
         "month": 1,
         "emi": 340.02,
@@ -68,18 +68,33 @@ def test_amortisation_schedule_contains_monthly_payment_breakdown():
     }
     assert rows[1]["month"] == 2
     assert rows[1]["balance"] < rows[0]["balance"]
+    assert rows[2] == {
+        "month": 3,
+        "emi": 340.03,
+        "interest": 3.37,
+        "principal": 336.66,
+        "balance": 0.0,
+    }
 
 
-def test_one_month_schedule_is_empty_in_current_implementation():
-    assert amortisation_schedule(1200, 0, 1) == []
+def test_one_month_schedule_contains_final_payment():
+    rows = amortisation_schedule(1200, 0, 1)
+
+    assert len(rows) == 1
+    assert rows[0]["emi"] == 1200.0
+    assert rows[0]["balance"] == 0.0
 
 
 def test_outstanding_after_zero_months_returns_original_principal():
     assert outstanding_after(1000, 12, 12, 0) == 1000.0
 
 
-def test_outstanding_after_more_rows_than_schedule_returns_zero():
+def test_outstanding_after_full_term_returns_zero():
     assert outstanding_after(1000, 12, 3, 3) == 0.0
+
+
+def test_outstanding_after_more_payments_than_term_returns_zero():
+    assert outstanding_after(1000, 12, 3, 4) == 0.0
 
 
 def test_outstanding_after_returns_requested_schedule_balance():

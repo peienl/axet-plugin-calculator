@@ -111,9 +111,13 @@ def test_remaining_tenure_for_paid_off_balance_is_zero():
     assert remaining_tenure(0, 12, 100) == 0
 
 
+def test_remaining_tenure_converts_annual_rate_to_monthly_rate():
+    assert remaining_tenure(1000, 12, 100) == 11
+
+
 def test_remaining_tenure_rejects_payment_that_does_not_cover_interest():
     with pytest.raises(ValueError, match="instalment too small"):
-        remaining_tenure(1000, 12, 120)
+        remaining_tenure(1000, 12, 10)
 
 
 def test_prepayment_larger_than_balance_leaves_no_remaining_term():

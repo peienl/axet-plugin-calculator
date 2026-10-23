@@ -23,6 +23,10 @@ def test_emi_with_zero_interest():
     assert emi(1200, 0, 12) == 100.0
 
 
+def test_emi_preserves_small_nonzero_interest_rate():
+    assert emi(100_000, 0.05, 12) > round(100_000 / 12, 2)
+
+
 def test_emi_with_one_month_tenure():
     assert emi(1200, 12, 1) == 1212.0
 
